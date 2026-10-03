@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>QR Studio — generate and print-proof QR codes</title>
+  <meta name="description" content="Generate, customize, and download QR codes for URLs, text, email, phone, and Wi-Fi — entirely in your browser." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%2230%22 height=%2230%22 x=%2210%22 y=%2210%22 fill=%22%23201F1C%22/><rect width=%2230%22 height=%2230%22 x=%2260%22 y=%2210%22 fill=%22%23201F1C%22/><rect width=%2230%22 height=%2230%22 x=%2210%22 y=%2260%22 fill=%22%23201F1C%22/></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="topbar__mark" aria-hidden="true">
+      <span></span><span></span><span></span>
+    </div>
+    <h1 class="topbar__title">QR Studio</h1>
+  </header>
+
+  <main class="layout">
+
+    <!-- CONTROLS -->
+    <section class="panel panel--controls" aria-label="QR code controls">
+
+      <div class="field-group">
+        <span class="field-group__label">Type</span>
+        <div class="type-tabs" role="tablist" id="typeTabs">
+          <button class="type-tab is-active" role="tab" data-type="url" aria-selected="true">URL</button>
+          <button class="type-tab" role="tab" data-type="text" aria-selected="false">Text</button>
+          <button class="type-tab" role="tab" data-type="email" aria-selected="false">Email</button>
+          <button class="type-tab" role="tab" data-type="phone" aria-selected="false">Phone</button>
+          <button class="type-tab" role="tab" data-type="wifi" aria-selected="false">Wi-Fi</button>
+        </div>
+      </div>
+
+      <!-- Dynamic inputs per type -->
+      <div class="field-group" id="inputsUrl">
+        <label class="field-label" for="inputUrlValue">Link</label>
+        <input class="text-input" id="inputUrlValue" type="text" placeholder="https://example.com" autocomplete="off" />
+        <p class="field-error" id="errUrl"></p>
+      </div>
+
+      <div class="field-group is-hidden" id="inputsText">
+        <label class="field-label" for="inputTextValue">Content</label>
+        <textarea class="text-input text-input--area" id="inputTextValue" rows="4" placeholder="Type anything to encode"></textarea>
+        <p class="field-error" id="errText"></p>
+      </div>
+
+      <div class="field-group is-hidden" id="inputsEmail">
+        <label class="field-label" for="inputEmailTo">Address</label>
+        <input class="text-input" id="inputEmailTo" type="text" placeholder="name@example.com" autocomplete="off" />
+        <label class="field-label" for="inputEmailSubject">Subject <span class="field-label__optional">optional</span></label>
+        <input class="text-input" id="inputEmailSubject" type="text" placeholder="Subject line" autocomplete="off" />
+        <label class="field-label" for="inputEmailBody">Body <span class="field-label__optional">optional</span></label>
+        <textarea class="text-input text-input--area" id="inputEmailBody" rows="3" placeholder="Message"></textarea>
+        <p class="field-error" id="errEmail"></p>
+      </div>
+
+      <div class="field-group is-hidden" id="inputsPhone">
+        <label class="field-label" for="inputPhoneValue">Number</label>
+        <input class="text-input" id="inputPhoneValue" type="text" placeholder="+1 555 010 1234" autocomplete="off" />
+        <p class="field-error" id="errPhone"></p>
+      </div>
+
+      <div class="field-group is-hidden" id="inputsWifi">
+        <label class="field-label" for="inputWifiSsid">Network name</label>
+        <input class="text-input" id="inputWifiSsid" type="text" placeholder="Network SSID" autocomplete="off" />
+        <label class="field-label" for="inputWifiPassword">Password</label>
+        <input class="text-input" id="inputWifiPassword" type="text" placeholder="Leave blank if open network" autocomplete="off" />
+        <label class="field-label" for="inputWifiSecurity">Security</label>
+        <select class="text-input" id="inputWifiSecurity">
+          <option value="WPA">WPA / WPA2</option>
+          <option value="WEP">WEP</option>
+          <option value="nopass">None (open)</option>
+        </select>
+        <p class="field-error" id="errWifi"></p>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="field-group">
+        <span class="field-group__label">Presets</span>
+        <div class="preset-row" id="presetRow">
+          <button class="preset-chip is-active" data-preset="classic">Classic</button>
+          <button class="preset-chip" data-preset="ink">Ink</button>
+          <button class="preset-chip" data-preset="signal">Signal</button>
+          <button class="preset-chip" data-preset="paper">Paper</button>
+          <button class="preset-chip" data-preset="contrast">Contrast</button>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <span class="field-group__label">Appearance</span>
+
+        <div class="row-2col">
+          <label class="field-label field-label--inline" for="fgColor">Foreground
+            <input type="color" id="fgColor" value="#201f1c" />
+          </label>
+          <label class="field-label field-label--inline" for="bgColor">Background
+            <input type="color" id="bgColor" value="#faf9f6" />
+          </label>
+        </div>
+
+        <label class="field-label" for="sizeRange">Size <span class="field-label__value" id="sizeValue">280px</span></label>
+        <input type="range" id="sizeRange" min="160" max="560" step="20" value="280" />
+
+        <label class="field-label" for="marginRange">Margin <span class="field-label__value" id="marginValue">4</span></label>
+        <input type="range" id="marginRange" min="0" max="10" step="1" value="4" />
+
+        <label class="field-label" for="ecLevel">Error correction</label>
+        <select class="text-input" id="ecLevel">
+          <option value="L">L — low (7%)</option>
+          <option value="M" selected>M — medium (15%)</option>
+          <option value="Q">Q — quartile (25%)</option>
+          <option value="H">H — high (30%)</option>
+        </select>
+      </div>
+
+      <p class="scan-warning is-hidden" id="scanWarning">
+        Low contrast or a low correction level may make this code hard to scan.
+      </p>
+
+      <div class="divider"></div>
+
+      <div class="download-row">
+        <button class="btn btn--primary" id="downloadPng">Download PNG</button>
+        <button class="btn btn--ghost" id="downloadSvg">Download SVG</button>
+        <button class="btn btn--ghost" id="copyPng">Copy</button>
+      </div>
+
+    </section>
+
+    <!-- PREVIEW -->
+    <section class="panel panel--preview" aria-label="QR code preview">
+      <div class="proof-card">
+        <span class="proof-card__mark proof-card__mark--tl" aria-hidden="true"></span>
+        <span class="proof-card__mark proof-card__mark--tr" aria-hidden="true"></span>
+        <span class="proof-card__mark proof-card__mark--bl" aria-hidden="true"></span>
+        <span class="proof-card__mark proof-card__mark--br" aria-hidden="true"></span>
+        <div class="proof-card__canvas-wrap">
+          <canvas id="qrCanvas"></canvas>
+          <div class="proof-card__empty" id="emptyState">Start typing to generate a code</div>
+        </div>
+      </div>
+      <div class="data-readout">
+        <span class="data-readout__label">encodes</span>
+        <code class="data-readout__value" id="dataReadout">—</code>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- RECENT -->
+  <section class="recent" aria-label="Recently generated codes">
+    <div class="recent__head">
+      <span class="recent__title">Recent</span>
+      <button class="recent__clear" id="clearRecent">clear</button>
+    </div>
+    <div class="recent__strip" id="recentStrip">
+      <p class="recent__empty" id="recentEmpty">Codes you generate will show up here.</p>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <span>Built for GDG on Campus SRM — Technical Recruitment, 2026-27</span>
+  </footer>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="js/qrcode.lib.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
