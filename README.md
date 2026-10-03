@@ -1,4 +1,5 @@
 # QR Studio
+**Live demo:** _https://qr-studio-mu-one.vercel.app/_
 
 A browser-only QR code generator and designer, built for the **GDG on Campus SRM — Technical Recruitment 2026-27** 
 
